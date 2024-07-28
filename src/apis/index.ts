@@ -3,21 +3,39 @@ const apiHostUrl = process.env.API_HOST_URL ? process.env.API_HOST_URL : "https:
 
 const url = {
     queryRaffleAwardList: `${apiHostUrl}/api/v1/raffle/query_raffle_award_list`,
-    randomRaffle: `${apiHostUrl}/api/v1/raffle/random_raffle`
+    randomRaffle: `${apiHostUrl}/api/v1/raffle/random_raffle`,
+    strategyArmory: `${apiHostUrl}/api/v1/raffle/strategy_armory`
 }
 
 const apipost_id = "ed497a";
+
+/**
+ * 装配抽奖
+ * @param strategyId
+ */
+export const strategyArmory = (strategyId?: number) => {
+    return fetch(`${url.strategyArmory}?strategyId=${strategyId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
 /**
  * 查询抽奖奖品列表
  * @param strategyId 策略ID
  */
-export const queryRaffleAwardList = (strategyId: number) => {
+export const queryRaffleAwardList = (strategyId?: number) => {
     try {
-        return fetch(`${url.queryRaffleAwardList}?strategyId=${strategyId}&apipost_id=${apipost_id}`, {
-            method: 'get',
+        return fetch(`${url.queryRaffleAwardList}`, {
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            }
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                strategyId: strategyId
+            })
         });
     } catch (error) {
         return fetch("{\n" +
@@ -28,13 +46,30 @@ export const queryRaffleAwardList = (strategyId: number) => {
     }
 }
 
-export const randomRaffle = (strategyId: number) => {
+/**
+ * 随机抽奖接口
+ * @param strategyId 策略ID
+ *
+ * {
+ * 	"code": "0000",
+ * 	"info": "调用成功",
+ * 	"data": {
+ * 	    "awardIndex": 1, // awardIndex 获得的是列表中第几个奖品，方便测试使用
+ * 		"awardId": 535,
+ * 		"awardTitle": "一部手机"
+ * 	}
+ * }
+ */
+export const randomRaffle = (strategyId?: number) => {
     try {
-        return fetch( `${url.randomRaffle}?strategyId=${strategyId}&apipost_id=${apipost_id}`, {
-            method: 'get',
+        return fetch(`${url.randomRaffle}`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
-            }
+            },
+            body: JSON.stringify({
+                strategyId: strategyId
+            })
         })
     } catch (error) {
         return fetch("{\n" +
